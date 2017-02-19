@@ -6,9 +6,9 @@ Summary:	Red Hat Satellite ssh public key - needed for remote execution
 Group:		Development/Languages
 License:	LGPLv2
 URL:		https://access.redhat.com/articles/2464671
-Source0:	https://codeload.github.com/ftaher/satellite-ssh-pubkey/tar.gz/%{version}
+Source:		https://github.com/ftaher/satellite-ssh-pubkey/archive/%{version}.tar.gz
 
-BuildRoot: %{_tmppath}/%{name}-%{version}-%{release}-root-%(%{__id_u} -n)
+#BuildRoot: %{_tmppath}/%{name}-%{version}-%{release}-root-%(%{__id_u} -n)
 BuildArch: noarch
 
 Requires:	curl,sed,grep,subscription-manager
@@ -18,6 +18,19 @@ Red Hat Satellite ssh public key - needed for remote execution.
 First this rpm will try to discovering the RHSM server hostname by running subscription-manager config
 Then it will download this key from satellite web API and install it using the following command
 curl -k https://${SATELLITE_HOSTNAME}:9090/ssh/pubkey >> ~/.ssh/authorized_keys
+
+%prep
+wget https://github.com/ftaher/satellite-ssh-pubkey/archive/%{version}.tar.gz -P ../SOURCES
+#tar xzf %version.tar.gz 
+#rm %version.tar.gz
+
+#%install
+#mkdir -p %{buildroot}/usr/share/doc/satellite-ssh-pubkey/
+#mv satellite-ssh-pubkey-%{version}/LICENSE %{buildroot}/usr/share/doc/satellite-ssh-pubkey/
+#mv %{buildroot}/LICENSE %{buildroot}/usr/share/doc/satellite-ssh-pubkey/
+
+%clean
+rm -rf %{buildroot}
 
 %post
 ### POST INSTALL
@@ -90,17 +103,17 @@ fi
 exit 0
 
 %files
-%doc LICENSE
+#%doc /usr/share/doc/satellite-ssh-pubkey/LICENSE
 
 %changelog
-* Thu Feb 18 2017 Feras Al Taher <feras@redhat.com> 1.3
+* Sat Feb 18 2017 Feras Al Taher <feras@redhat.com> 1.3
 - added a github source
 - test for empty $SATELLITE_HASH and $SATELLITE_HOSTNAME
 - uninstall previous old keys if changed by satellite
-* Thu Feb 17 2017 Feras Al Taher <feras@redhat.com> 1.2
+* Fri Feb 17 2017 Feras Al Taher <feras@redhat.com> 1.2
 - chnage the name from foreman-ssh-pubkey-installer to satellite-ssh-pubkey
 - upgrade bug: test $1 before proceeding with the uninstall
-* Thu Feb 17 2017 Feras Al Taher <feras@redhat.com> 1.1
+* Fri Feb 17 2017 Feras Al Taher <feras@redhat.com> 1.1
 - test for empty $SATELLITE_HOSTNAME
 - make sure /root/.ssh exists
 * Thu Feb 16 2017 Feras Al Taher <feras@redhat.com> 1.0
